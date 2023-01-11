@@ -20,7 +20,7 @@ router.get('/:id', (req, res) => {
         res.json(storeBook.books[index])
     } else {
         res.status(404)
-        res.json("not found book")
+        res.json({ errcode: 404, errmsg: "not found book" })
     }
 })
 router.post('/', fileMiddleware.single('fileBook'), (req, res) => {
@@ -48,7 +48,7 @@ router.put('/:id', (req, res) => {
         res.json(storeBook.books[index])
     } else {
         res.status(404)
-        res.json("not found book")
+        res.json({ errcode: 404, errmsg: "not found book" })
     }
 })
 router.delete('/:id', (req, res) => {
@@ -59,7 +59,7 @@ router.delete('/:id', (req, res) => {
         res.json("ok")
     } else {
         res.status(404)
-        res.json("not found book")
+        res.json({ errcode: 404, errmsg: "not found book" })
     }
 })
 
