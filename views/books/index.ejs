@@ -1,0 +1,37 @@
+<%- include('../layers/header', {title}) %>
+
+    <table class="table table-striped">
+        <a type="button" class="btn btn-primary" href="/books/create">Добавить книгу</a>
+        <%if(books.length){%>
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Управление</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%books.map((item,index)=>{%>
+                    <tr>
+                        <th scope="row">
+                            <%=index%>
+                        </th>
+                        <td><a class="nav-link" href="/books/book/<%=item.id%>">
+                                <%=item.title%>
+                            </a></td>
+                        <td>
+                            <a href="/books/update/<%=item.id%>" class="btn btn-sm btn-success">✎</a>
+                            <form action="/books/delete/<%=item.id%>" method="POST" class="d-inline">
+                                <button class="btn btn-sm btn-danger">🞪 </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <%})%>
+
+            </tbody>
+            <%}else{%>
+                <h3>Библиотека пуста</h3>
+                <%}%>
+
+    </table>
+    <%- include('../layers/footer') %>

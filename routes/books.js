@@ -5,61 +5,95 @@ const fileMiddleware = require('../middleware/file');
 
 
 router.get('/', (req, res) => {
-    res.json(storeBook.books)
+    // res.json(storeBook.books)
+    // console.log(storeBook.books)
+    res.render('books/index', { books: storeBook.books, title: "Библиотека" })
 })
-router.get('/:id/download',(req, res) => {
+router.get('/:id/download', (req, res) => {
     const { id } = req.params
     const index = storeBook.books.findIndex(item => item.id == id)
-    console.log(storeBook.books[index].fileBook)
-    res.redirect(storeBook.books[index].fileBook);
+    //console.log(storeBook.books[index].fileBook)
+    // res.redirect(storeBook.books[index].fileBook);
+    res.download(storeBook.books[index].fileBook)
 })
-router.get('/:id', (req, res) => {
+router.get('/book/:id', (req, res) => {
     const { id } = req.params
     const index = storeBook.books.findIndex(item => item.id === id)
     if (index !== -1) {
-        res.json(storeBook.books[index])
+        //res.json(storeBook.books[index])
+        res.render('books/view', { book: storeBook.books[index], title: storeBook.books[index].title })
     } else {
         res.status(404)
-        res.json({ errcode: 404, errmsg: "not found book" })
+        // res.json({ errcode: 404, errmsg: "not found book" })
+        res.render('404', { title: "Книга не найдена" })
     }
 })
-router.post('/', fileMiddleware.single('fileBook'), (req, res) => {
+router.get('/create', (req, res) => {
+    // res.json(storeBook.books)
+    res.render('books/create', { title: "Создать книгу" })
+})
+router.post('/create', fileMiddleware.single('fileBook'), (req, res) => {
     let fileBook = null
-    console.log(req.file)
+    //console.log(req)
     if (req.file) {
         fileBook = req.file.path;
-    }  
-    if(fileBook){
-        fileBook = '/'+fileBook.replaceAll('\\','/')
+    }
+    if (fileBook) {
+        fileBook = fileBook.replaceAll('\\', '/')
     }
     const { title, description, authors, favorite, fileCover, fileName } = req.body
     const newBook = new storeBook.classBook(title, description, authors, favorite, fileCover, fileName, fileBook)
     storeBook.books.push(newBook)
-    res.json(newBook)
+    res.redirect('/books')
 })
-router.put('/:id', (req, res) => {
+router.get('/update/:id', (req, res) => {
+    // res.json(storeBook.books)
+    const { id } = req.params
+    const { title, description, authors, favorite, fileCover, fileName } = req.body
+    const index = storeBook.books.findIndex(item => item.id == id)
+    if (index !== -1) {
+        //res.json(storeBook.books[index])
+        res.render('books/update', { book: storeBook.books[index], title: "Редактировать книгу" })
+    } else {
+        res.status(404)
+        //res.json({ errcode: 404, errmsg: "not found book" })
+        res.render('404', { title: "Книга не найдена" })
+    }
+})
+router.post('/update/:id',fileMiddleware.single('fileBook'), (req, res) => {
+    let fileBook = null
+    if (req.file) {
+        fileBook = req.file.path;
+    }
+    if (fileBook) {
+        fileBook = fileBook.replaceAll('\\', '/')
+    }
     const { id } = req.params
     const { title, description, authors, favorite, fileCover, fileName } = req.body
     const index = storeBook.books.findIndex(item => item.id == id)
     if (index !== -1) {
         storeBook.books[index] = {
-            ...storeBook.books[index], title, description, authors, favorite, fileCover, fileName
+            ...storeBook.books[index], title, description, authors, favorite, fileCover, fileName, fileBook
         }
-        res.json(storeBook.books[index])
+        // res.json(storeBook.books[index])
+        res.redirect(`/books`)
     } else {
         res.status(404)
-        res.json({ errcode: 404, errmsg: "not found book" })
+        //res.json({ errcode: 404, errmsg: "not found book" })
+        res.render('404', { title: "Книга не найдена" })
     }
 })
-router.delete('/:id', (req, res) => {
+router.post('/delete/:id', (req, res) => {
     const { id } = req.params
     const index = storeBook.books.findIndex(item => item.id == id)
     if (index !== -1) {
         storeBook.books.splice(index, 1)
-        res.json("ok")
+        // res.json("ok")
+        res.redirect('/books')
     } else {
         res.status(404)
-        res.json({ errcode: 404, errmsg: "not found book" })
+        // res.json({ errcode: 404, errmsg: "not found book" })
+        res.render('404', { title: "Книга не найдена" })
     }
 })
 

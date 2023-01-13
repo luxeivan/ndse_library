@@ -1,0 +1,4 @@
+<%- include('../layers/header', {title}) %>
+<h2><%=title%></h2>
+<%- include('form',{book,path:`/books/update/${book.id}`}) %>
+<%- include('../layers/footer') %>

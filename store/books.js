@@ -12,5 +12,14 @@ module.exports = {
             this.fileBook = fileBook
         }
     },
-    books: []
+    books: [{
+        id: "123456",
+        title: "первая книга",
+        description: "это тестовая книга",
+        authors: "Народ",
+        favorite: "Тратата",
+        fileCover: "https://avatars.mds.yandex.net/get-marketpic/5393578/pic12fd06680734fa83cc2211e46f927dcf/orig",
+        fileName: "Не понятно что здесь",
+        fileBook: "Путь к файлу с книгой"
+    }]
 }

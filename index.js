@@ -6,10 +6,11 @@ const error404 = require('./middleware/err404')
 const PORT = process.env.port || 3000
 const app = express()
 app.use(express.json())
+app.set('view engine', 'ejs')
 
-app.use('/public', express.static(__dirname+'/public'))
+app.use('/public', express.static(__dirname + '/public'))
 app.use('/api/user', user)
-app.use('/api/books', book)
+app.use('/books', book)
 app.use(error404)
 
 app.listen(PORT)
