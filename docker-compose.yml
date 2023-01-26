@@ -5,3 +5,12 @@ services:
       - D:\Data:/app/public/books
     ports:
       - 3000:3000
+    depends_on:
+      - counter
+    environment:
+      - SERVERCOUNTER=http://counter:3001
+  counter:
+    image: luxeivan/servercounter:v01
+    volumes:
+      - D:\Data:/app/public/db
+    

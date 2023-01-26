@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const storeBook = require('../store/books')
 const fileMiddleware = require('../middleware/file');
+const serverCounter = process.env.SERVERCOUNTER || 'http://localhost:3001'
+const axios = require('axios')
 
 
 router.get('/', (req, res) => {
@@ -21,7 +23,25 @@ router.get('/book/:id', (req, res) => {
     const index = storeBook.books.findIndex(item => item.id === id)
     if (index !== -1) {
         //res.json(storeBook.books[index])
-        res.render('books/view', { book: storeBook.books[index], title: storeBook.books[index].title })
+        let count = 0
+        axios.get(serverCounter + `/counter/${id}`)
+            .then(function (response) {
+                // handle success
+                console.log(response.data);
+                if (response.data) {
+                    count = response.data
+                }
+                res.render('books/view', { book: storeBook.books[index], title: storeBook.books[index].title, count: count })
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+        axios.post(serverCounter + `/counter/${id}/incr`)
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
     } else {
         res.status(404)
         // res.json({ errcode: 404, errmsg: "not found book" })
@@ -60,7 +80,7 @@ router.get('/update/:id', (req, res) => {
         res.render('404', { title: "Книга не найдена" })
     }
 })
-router.post('/update/:id',fileMiddleware.single('fileBook'), (req, res) => {
+router.post('/update/:id', fileMiddleware.single('fileBook'), (req, res) => {
     let fileBook = null
     if (req.file) {
         fileBook = req.file.path;
