@@ -1,0 +1,7 @@
+services:
+  library:
+    image: luxeivan/library:v1
+    volumes:
+      - D:\Data:/app/public/books
+    ports:
+      - 3000:3000

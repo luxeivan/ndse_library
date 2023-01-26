@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 router.get('/:id/download', (req, res) => {
     const { id } = req.params
     const index = storeBook.books.findIndex(item => item.id == id)
-    //console.log(storeBook.books[index].fileBook)
+    console.log(storeBook.books[index].fileBook)
     // res.redirect(storeBook.books[index].fileBook);
     res.download(storeBook.books[index].fileBook)
 })

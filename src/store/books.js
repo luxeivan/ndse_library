@@ -20,6 +20,6 @@ module.exports = {
         favorite: "Тратата",
         fileCover: "https://avatars.mds.yandex.net/get-marketpic/5393578/pic12fd06680734fa83cc2211e46f927dcf/orig",
         fileName: "Не понятно что здесь",
-        fileBook: "Путь к файлу с книгой"
+        fileBook: "/app/public/books/1673620151211-c16846589ae06b5d3e967afa468bc2ab_2c9bbd70bc.pdf"
     }]
 }
