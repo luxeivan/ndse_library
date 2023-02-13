@@ -1,17 +1,33 @@
 const express = require('express')
+var bodyParser = require('body-parser')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const session = require('express-session')
+const verify = require('./middleware/verify')
+
 const book = require('./routes/books')
-const user = require('./routes/user')
+const user = require('./routes/users')
 const error404 = require('./middleware/err404')
 const path = require('path')
 
 const PORT = process.env.port || 3000
 const app = express()
 app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(passport.initialize())
+// app.use(passport.session())
+const options = {
+  usernameField: "username",
+  passwordField: "password",
+}
+passport.use('local', new LocalStrategy(options, verify))
+
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'));
 
 app.get('/', (req, res) => {
-    res.redirect('/books')
+  res.redirect('/books')
 })
 
 app.use('/public', express.static(__dirname + '/public'))

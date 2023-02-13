@@ -1,0 +1,10 @@
+<%- include('../layers/header', {user}) %>
+<h2>Мой профиль</h2>
+<div class="profile">
+  <ul class="profile__list">
+    <li class="profile__item"><span class="profile__name">ID:</span><%=user.id%></li>
+    <li class="profile__item"><span class="profile__name">NAME:</span><%=user.name%></li>
+    <li class="profile__item"><span class="profile__name">SURNAME:</span><%=user.surname%></li>
+  </ul>
+</div>
+<%- include('../layers/footer') %>

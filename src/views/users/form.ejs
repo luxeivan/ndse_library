@@ -1,0 +1,95 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="#" id="auth">Авторизоваться</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" id="reg">Зарегистрироваться</a>
+  </li>
+
+</ul>
+<div class="autorization activeform" id="autorization">
+  <form method="POST" class="mt-5" action="<%=pathauth%>">
+
+    <div class="form-group">
+      <label for="username">Имя пользователя</label>
+      <input type="text" name="username" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label for="password">Пароль</label>
+      <input type="password" rows="3" name="password" class="form-control" />
+    </div>
+    <div class="form-group text-right">
+      <button type="submit" class="btn btn-primary">Авторизоваться</button>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div class="registration" id="registration">
+  <form method="POST" class="mt-5" action="<%=pathreg%>">
+    <div class="form-group">
+      <label for="username">Имя пользователя</label>
+      <input type="text" name="username" class="form-control" required/>
+    </div>
+    <div class="form-group">
+      <label for="name">Имя</label>
+      <input type="text" name="name" class="form-control" required/>
+    </div>
+
+    <div class="form-group">
+      <label for="surname">Фамилия</label>
+      <input type="text" rows="3" name="surname" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input type="text" rows="3" name="email" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Пароль</label>
+      <input type="password" rows="3" name="password" class="form-control" required/>
+    </div>
+    <div class="form-group text-right">
+      <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  .autorization {
+    display: none;
+  }
+
+  .registration {
+    display: none;
+  }
+
+  .activeform {
+    display: block;
+  }
+</style>
+<script>
+
+  const auth = document.getElementById('auth')
+  const reg = document.getElementById('reg')
+  const autorization = document.getElementById('autorization')
+  const registration = document.getElementById('registration')
+
+  auth.addEventListener('click', (event) => {
+    event.preventDefault()
+    auth.classList.add('active')
+    autorization.classList.add('activeform')
+    reg.classList.remove('active')
+    registration.classList.remove('activeform')
+  })
+  reg.addEventListener('click', (event) => {
+    event.preventDefault()
+    reg.classList.add('active')
+    registration.classList.add('activeform')
+    auth.classList.remove('active')
+    autorization.classList.remove('activeform')
+  })
+</script>
