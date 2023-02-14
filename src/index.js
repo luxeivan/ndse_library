@@ -4,6 +4,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const session = require('express-session')
 const verify = require('./middleware/verify')
+const User = require("./model/user");
 
 const book = require('./routes/books')
 const user = require('./routes/users')
@@ -13,15 +14,27 @@ const path = require('path')
 const PORT = process.env.port || 3000
 const app = express()
 app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: 'SECRET'}));
 
 app.use(passport.initialize())
-// app.use(passport.session())
+app.use(passport.session())
 const options = {
   usernameField: "username",
   passwordField: "password",
 }
 passport.use('local', new LocalStrategy(options, verify))
+passport.serializeUser((user, cb) => {
+  cb(null, user.id)
+})
+passport.deserializeUser(async (id, cb) => {
+  try {
+    const user = await User.find({ _id: id });
+    cb(null, user)
+  } catch (error) {
+    if (err) { return cb(err) }
+  }
+})
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'));

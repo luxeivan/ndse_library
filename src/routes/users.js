@@ -2,40 +2,41 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require("mongoose");
 const serverMongo = process.env.SERVERMONGO || "mongodb://root:example@localhost:27017/";
-const User = require('../../model/user')
+const User = require('../model/user')
+const passport = require('passport')
 
 router.get('/login', (req, res) => {
-    res.render('users/login', { title: 'Авторизийруйтесь' })
+  res.render('users/login', { title: 'Авторизийруйтесь', user: req.user })
 })
-router.get('/me', (req, res) => {
-    if (req.isAuthenticated) {
-        res.render('users/me')
-    }
-    res.json({ status: 'not auth' })
+router.get('/me', (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/api/user/login')
+  }
+  next()
+}, (req, res) => {
+  console.log(req.user)
+  res.render('users/me', { user: req.user })
 })
-router.post('/login', async (req, res) => {
-    const {username} = req.body
-    try {
-        const user = await User.find({username});
-        res.json(user)
-      } catch (error) {
-        console.error(error);
-      }
-    // res.status(201)
-    // res.json({ id: 1, mail: "test@mail.ru" })
-    // res.redirect('/api/user/me')
+router.post('/login', passport.authenticate('local', { failureRedirect: '/api/user/login' }), (req, res) => {
+  res.redirect('/api/user/me')
 })
 router.post('/singup', async (req, res) => {
-    // res.status(201)
-    const { username, name, surname = '', email = '', password } = req.body
-    const newUser = new User({ username, name, surname, email, password });
-      try {
-        await newUser.save();
-      } catch (error) {
-        console.error(error);
-      }
-    res.json({ username, name, surname, email, password })
+  const { username, name, surname = '', email = '', password } = req.body
+  const newUser = new User({ username, name, surname, email, password });
+  try {
+    await newUser.save();
+  } catch (error) {
+    console.error(error);
+  }
+  res.redirect('/api/user/me')
+  // res.json({ username, name, surname, email, password })
 
 })
+router.get('/logout', (req, res) => {
+  req.logout(function (error) {
+    if (error) { console.error(error); }
+    res.redirect('/');
+  });
+});
 
 module.exports = router

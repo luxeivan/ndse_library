@@ -1,4 +1,41 @@
-<nav style="padding: 20px 0; background-color: rgb(226, 226, 226); margin-bottom: 10px;">
-    <a href="/books" style="text-decoration: none; margin-left: 10px ;">Все книги</a>
-    <a href="/api/user/login" style="text-decoration: none; margin-left: 10px ;">Логин</a>
+<nav class="navlist">
+    <div class="navlist__item">
+        <a class="navlist__link" href="/books">Все книги</a>
+        <% if(typeof user !=="undefined" ){ %>
+            <a class="navlist__link" href="/api/user/me">Мой профиль</a>
+            <% }%>
+    </div>
+    <div class="navlist__item">
+        <% if(typeof user !=="undefined" ){ %>
+            <span class="navlist__username" id="">Здравствуйте, <%= user[0].name%>
+                    <%= user[0].surname%></span>
+            <a class="navlist__link" href="/api/user/logout" id="userarea">Выход</a>
+            <% }else{%>
+                <a class="navlist__link" href="/api/user/login" id="userarea">Логин</a>
+                <% }%>
+    </div>
 </nav>
+<style>
+    .navlist {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        background-color: rgb(226, 226, 226);
+        margin-bottom: 10px;
+    }
+
+    .navlist__item {
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+    .navlist__username {
+        margin-right: 20px;
+        font-weight: 700;
+    }
+
+    .navlist__link {
+        margin: 0 10px;
+        text-decoration: none;
+    }
+</style>

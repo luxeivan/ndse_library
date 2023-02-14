@@ -5,14 +5,14 @@ const router = express.Router();
 const fileMiddleware = require("../middleware/file");
 const serverMongo = process.env.SERVERMONGO || "mongodb://root:example@localhost:27017/";
 // const axios = require("axios");
-const Book = require("../../model/book");
+const Book = require("../model/book");
 
 mongoose.connect(serverMongo);
 
 router.get("/", async (req, res) => {
   try {
     const books = await Book.find();
-    res.render("books/index", { books, title: "Библиотека" });
+    res.render("books/index", { books, title: "Библиотека", user:req.user });
   } catch (error) {
     console.error(error);
   }
@@ -34,17 +34,17 @@ router.get("/book/:id", async (req, res) => {
   try {
     const book = await Book.findById(id);
     if (book) {
-      res.render("books/view", { book, title: book.title });
+      res.render("books/view", { book, title: book.title, user:req.user });
     } else {
       res.status(404);
-      res.render("404", { title: "Книга не найдена" });
+      res.render("404", { title: "Книга не найдена", user:req.user });
     }
   } catch (error) {
     console.error(error);
   }
 });
 router.get("/create", async (req, res) => {
-  res.render("books/create", { title: "Создать книгу" });
+  res.render("books/create", { title: "Создать книгу", user:req.user });
 });
 router.post("/create", fileMiddleware.single("fileBook"), async (req, res) => {
   let fileBook = null;
@@ -76,10 +76,10 @@ router.get("/update/:id", async (req, res) => {
   try {
     const book = await Book.findById(id);
     if (book) {
-      res.render("books/update", { book, title: "Редактировать книгу" });
+      res.render("books/update", { book, title: "Редактировать книгу", user:req.user });
     } else {
       res.status(404);
-      res.render("404", { title: "Книга не найдена" });
+      res.render("404", { title: "Книга не найдена", user:req.user });
     }
   } catch (error) {
     console.error(error);
@@ -127,7 +127,7 @@ router.post(
         }
       } else {
         res.status(404);
-        res.render("404", { title: "Книга не найдена" });
+        res.render("404", { title: "Книга не найдена", user:req.user });
       }
     } catch (error) {
       console.error(error);
@@ -143,7 +143,7 @@ router.post("/delete/:id", async (req, res) => {
       res.redirect("/books");
     } else {
       res.status(404);
-      res.render("404", { title: "Книга не найдена" });
+      res.render("404", { title: "Книга не найдена", user:req.user });
     }
   } catch (error) {
     console.error(error);
