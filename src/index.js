@@ -5,6 +5,10 @@ const LocalStrategy = require('passport-local')
 const session = require('express-session')
 const verify = require('./middleware/verify')
 const User = require("./model/user");
+const socketIO = require('socket.io');
+const http = require('http')
+
+
 
 const book = require('./routes/books')
 const user = require('./routes/users')
@@ -13,6 +17,8 @@ const path = require('path')
 
 const PORT = process.env.port || 3000
 const app = express()
+const server = http.Server(app);
+const io = socketIO(server);
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: 'SECRET'}));
@@ -48,5 +54,24 @@ app.use('/api/user', user)
 app.use('/books', book)
 app.use(error404)
 
-app.listen(PORT)
+io.on('connection', (socket) => {
+  const {id} = socket;
+  // console.log(`Socket connected: ${id}`);
+
+  // работа с комнатами
+  const {roomName} = socket.handshake.query;
+  // console.log(`Socket roomName: ${roomName}`);
+  socket.join(roomName);
+  socket.on('message-to-room', (msg) => {
+      msg.type = `room: ${roomName}`;
+      socket.to(roomName).emit('message-to-room', msg);
+      socket.emit('message-to-room', msg);
+  });
+
+  socket.on('disconnect', () => {
+      // console.log(`Socket disconnected: ${id}`);
+  });
+});
+
+server.listen(PORT)
 console.log(`Server start on port ${PORT}`)

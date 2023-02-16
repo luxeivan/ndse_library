@@ -1,12 +1,83 @@
 <%- include('../layers/header', {title, user}) %>
-<div class="card" style="width: 400px;">
+  <div class="card" style="width: 400px;">
     <img src="<%=book.fileCover%>" class="card-img-top" alt="...">
     <div class="card-body">
-      <h5 class="card-title"><%=book.title%></h5>
-      <p class="card-text"><%=book.description%></p>
+      <h5 class="card-title">
+        <%=book.title%>
+      </h5>
+      <p class="card-text">
+        <%=book.description%>
+      </p>
       <a href="/books/<%=book.id%>/download" class="btn btn-info">Скачать</a>
       <a href="/books/update/<%=book.id%>" class="btn btn-success">Редактировать</a>
       <a href="/books/delete/<%=book.id%>" class="btn btn-danger">Удалить</a>
     </div>
   </div>
-<%- include('../layers/footer') %>
+  <div class="container">
+
+    
+    <div class="row">
+      <div class="col-4">
+        <div class="form-group">
+          <label for="username">Имя:</label>
+          <input placeholder="Введите имя" type="text" id="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="text">Комментарий:</label>
+          <textarea placeholder="..." class="form-control" id="text"></textarea>
+        </div>
+        <button type="submit" id="send-room" class="btn btn-primary">Отправить</button>
+      </div>
+      
+      <div class="row">
+        <h2>
+          Комментарии
+        </h2>
+        <div class="col-4">
+          <div id="list" class="list-group">
+  
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const roomName = location.pathname.split('/').pop();
+      const socket = io.connect('/', { query: `roomName=<%=book.title%>` });
+
+      const boxList = document.querySelector('#list');
+      const inputUsername = document.querySelector('#username');
+      const inputText = document.querySelector('#text');
+      const sendAll = document.querySelector('#send-all');
+      const sendMe = document.querySelector('#send-me');
+      const sendRoom = document.querySelector('#send-room');
+
+      const getTmp = (msg) => {
+        return `
+                  <div class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                          <small>${msg.username}</small>
+                          <small class="text-muted">${msg.type}</small>
+                      </div>
+                      <p class="mb-1">${msg.text}</p>
+                  </div>
+          `;
+      };
+
+      socket.on('message-to-room', (msg) => {
+        const div = getTmp(msg)
+        boxList.insertAdjacentHTML('beforeend', div)
+      });
+
+      sendRoom.addEventListener('click', () => {
+        socket.emit('message-to-room', {
+          username: inputUsername.value,
+          text: inputText.value,
+        })
+      })
+
+
+    </script>
+  </div>
+  <%- include('../layers/footer') %>
